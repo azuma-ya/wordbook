@@ -32,9 +32,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-512px.png" />
         <meta name="theme-color" content="#007AFF" />
       </head>
-      <body className={cn(inter.className, "antialiased min-h-screen")}>
+      <body className={cn(inter.className, "antialiased min-h-dvh")}>
         <Provider>
-          <div className="h-screen flex flex-col">
+          <div className="h-dvh flex flex-col">
             <Header />
             <div className="flex-1 relative">
               <div className="absolute inset-0 overflow-y-auto">
