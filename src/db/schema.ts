@@ -41,7 +41,7 @@ export const accounts = pgTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-  })
+  }),
 );
 
 export const sessions = pgTable("session", {
@@ -63,7 +63,7 @@ export const verificationTokens = pgTable(
     compositePk: primaryKey({
       columns: [verificationToken.identifier, verificationToken.token],
     }),
-  })
+  }),
 );
 
 export const authenticators = pgTable(
@@ -84,7 +84,7 @@ export const authenticators = pgTable(
     compositePK: primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),
-  })
+  }),
 );
 
 export const words = pgTable("words", {
@@ -94,10 +94,7 @@ export const words = pgTable("words", {
   word: text("word").notNull(),
   meaning: text("meaning").notNull(),
   explanation: text("explanation").notNull(),
-  synonyms: text("synonyms")
-    .array()
-    .notNull()
-    .default(sql`'{}'::text[]`),
+  synonyms: text("synonyms").array().notNull().default(sql`'{}'::text[]`),
 });
 
 export const wordsRelations = relations(words, ({ many }) => ({
@@ -122,25 +119,20 @@ export const testsRelations = relations(tests, ({ many }) => ({
 
 export const insertTestSchema = createInsertSchema(tests);
 
-export const wordsToTests = pgTable(
-  "words_to_tests",
-  {
-    wordId: text("word_id")
-      .notNull()
-      .references(() => words.id),
-    testId: text("test_id")
-      .notNull()
-      .references(() => tests.id),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (t) => ({
-    pk: primaryKey({ columns: [t.wordId, t.testId] }),
-  })
-);
+export const wordsToTests = pgTable("words_to_tests", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  wordId: text("word_id")
+    .notNull()
+    .references(() => words.id),
+  testId: text("test_id").references(() => tests.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
 
 export const wordsToTestsRelations = relations(wordsToTests, ({ one }) => ({
   word: one(words, {

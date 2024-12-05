@@ -5,7 +5,7 @@ import { Hono } from "hono";
 
 import { authMiddleware } from "@/lib/auth-middleware";
 import openai from "@/lib/openai";
-import { insertWordSchema, words } from "@/db/schema";
+import { insertWordSchema, words, wordsToTests } from "@/db/schema";
 import { db } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
 
@@ -45,7 +45,7 @@ const app = new Hono()
         .where(eq(type === "id" ? words.id : words.word, target));
 
       return c.json({ data });
-    }
+    },
   )
   .post(
     "/",
@@ -81,6 +81,10 @@ const app = new Hono()
             role: "system",
             content:
               "explanationにMarkdownで出力し、見やすく分かりやすいものにします",
+          },
+          {
+            role: "system",
+            content: "meaningには単純に意味を並べるだけでよいです。",
           },
           {
             role: "user",
@@ -131,13 +135,19 @@ const app = new Hono()
         return c.json({ error: "Server internal error" }, 500);
       }
 
-      const [data] = await db
-        .insert(words)
-        .values({ ...response, word })
-        .returning();
+      const data = await db.transaction(async (tx) => {
+        const [data] = await tx
+          .insert(words)
+          .values({ ...response, word })
+          .returning();
+
+        await tx.insert(wordsToTests).values({
+          wordId: data.id,
+        });
+      });
 
       return c.json({ data });
-    }
+    },
   );
 
 export const wordCustomApi = new Hono().get(
@@ -151,7 +161,7 @@ export const wordCustomApi = new Hono().get(
     }
 
     return c.json({ data: "/api/words:search" });
-  }
+  },
 );
 
 export default app;

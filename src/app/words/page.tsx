@@ -11,7 +11,7 @@ const WordsPage = () => {
   const data = wordsQuery.data;
 
   return (
-    <div>
+    <div className="h-full">
       <ul className="space-y-2">
         <p className="last:block hidden">まだ単語は登録されていません...</p>
         {data?.map((word) => (

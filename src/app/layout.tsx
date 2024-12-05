@@ -22,7 +22,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ja">
+      <head>
+        <link
+          rel="manifest"
+          href="/manifest.json"
+          crossOrigin="use-credentials"
+        />
+        <link rel="apple-touch-icon" href="/icon-512px.png" />
+        <meta name="theme-color" content="#007AFF" />
+      </head>
       <body className={cn(inter.className, "antialiased min-h-screen")}>
         <Provider>
           <div className="h-screen flex flex-col">

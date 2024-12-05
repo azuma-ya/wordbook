@@ -1,0 +1,18 @@
+{
+  "theme_color": "#007AFF",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Eitango",
+  "short_name": "英単語",
+  "description": "AI英単語張",
+  "icons": [
+    {
+      "src": "/icon-512px.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

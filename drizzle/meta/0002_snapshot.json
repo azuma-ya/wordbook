@@ -1,6 +1,6 @@
 {
-  "id": "73dfeedd-a73c-47a0-9cbe-302a628f2c75",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "26ab847d-58b7-45b1-a1f0-81ed27aca48c",
+  "prevId": "7dd94e37-1fe4-440c-b78d-9a6a91b4727f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -235,13 +235,13 @@
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "title": {
           "name": "title",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -257,7 +257,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "tests_title_unique": {
+          "name": "tests_title_unique",
+          "nullsNotDistinct": false,
+          "columns": ["title"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -395,6 +401,12 @@
       "name": "words_to_tests",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
         "word_id": {
           "name": "word_id",
           "type": "text",
@@ -405,7 +417,21 @@
           "name": "test_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -429,12 +455,7 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "words_to_tests_word_id_test_id_pk": {
-          "name": "words_to_tests_word_id_test_id_pk",
-          "columns": ["word_id", "test_id"]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

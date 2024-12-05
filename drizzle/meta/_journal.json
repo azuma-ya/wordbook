@@ -15,6 +15,13 @@
       "when": 1733408538207,
       "tag": "0001_vengeful_human_robot",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1733409128950,
+      "tag": "0002_zippy_silverclaw",
+      "breakpoints": true
     }
   ]
 }
