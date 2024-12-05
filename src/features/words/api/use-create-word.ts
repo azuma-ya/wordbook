@@ -16,8 +16,8 @@ const useCreateWord = () => {
       return (await response.json()) as ResponseType;
     },
     onSuccess: () => {
-      toast({ description: "英単語を作成しました" });
       queryClient.invalidateQueries({ queryKey: ["words"] });
+      queryClient.invalidateQueries({ queryKey: ["word"] });
     },
     onError: (error) => {
       console.log(error);

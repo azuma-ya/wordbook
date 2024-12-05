@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
+import { Inter } from "next/font/google";
+
 import Footer from "@/components/base/footer";
 import Header from "@/components/base/header";
 import Provider from "@/providers";
+import { cn } from "@/lib/utils";
+import Container from "@/components/layout/container";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,14 +23,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={cn(inter.className, "antialiased min-h-screen")}>
         <Provider>
           <div className="h-screen flex flex-col">
             <Header />
             <div className="flex-1 relative">
-              <div className="absolute inset-0 overflow-y-auto">{children}</div>
+              <div className="absolute inset-0 overflow-y-auto">
+                <Container className="h-full">{children}</Container>
+              </div>
             </div>
             <Footer />
           </div>

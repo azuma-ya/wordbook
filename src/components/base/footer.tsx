@@ -5,13 +5,15 @@ import { useCallback } from "react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { Search, Settings } from "lucide-react";
+import { BookCheck, List, Search, Settings } from "lucide-react";
 import Link from "next/link";
 import Container from "../layout/container";
 import { Button } from "../ui/button";
 
 const routes = [
   { href: "/", label: "調べる", icon: Search },
+  { href: "/words", label: "見つける", icon: List },
+  { href: "/tests", label: "テスト", icon: BookCheck },
   { href: "/dashboard/setting", label: "設定", icon: Settings },
 ];
 

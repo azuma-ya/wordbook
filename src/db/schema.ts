@@ -1,10 +1,9 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   integer,
   pgTable,
   primaryKey,
-  serial,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
@@ -89,44 +88,69 @@ export const authenticators = pgTable(
 );
 
 export const words = pgTable("words", {
-  word: text("word").notNull().primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  word: text("word").notNull(),
   meaning: text("meaning").notNull(),
-  partOfSpeech: text("part_of_speech"),
+  explanation: text("explanation").notNull(),
+  synonyms: text("synonyms")
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
 });
 
 export const wordsRelations = relations(words, ({ many }) => ({
-  examples: many(examples),
-  learningPoints: many(learningPoints),
-  synonyms: many(synonyms),
+  wordsToTests: many(wordsToTests),
 }));
 
 export const insertWordSchema = createInsertSchema(words);
 
-export const examples = pgTable("examples", {
-  id: serial("id").primaryKey(),
-  word: text("word_id").references(() => words.word, { onDelete: "cascade" }),
-  sentence: text("sentence"),
-  translation: text("translation"),
+export const tests = pgTable("tests", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  title: text("title").notNull().unique(),
 });
 
-export const insertExampleSchema = createInsertSchema(examples);
-
-export const learningPoints = pgTable("learning_points", {
-  id: serial("id").primaryKey(),
-  word: text("word").references(() => words.word, { onDelete: "cascade" }),
-  point: text("point").notNull(),
-});
-
-export const insertLearningPointsSchema = createInsertSchema(learningPoints);
-
-export const synonyms = pgTable("synonyms", {
-  id: serial("id").primaryKey(),
-  word: text("word").references(() => words.word, { onDelete: "cascade" }),
-  difference: text("difference"),
-});
-
-export const synoymsRelations = relations(synonyms, ({ many }) => ({
-  examples: many(examples),
+export const testsRelations = relations(tests, ({ many }) => ({
+  wordsToTests: many(wordsToTests),
 }));
 
-export const insertSynonymsSchema = createInsertSchema(synonyms);
+export const insertTestSchema = createInsertSchema(tests);
+
+export const wordsToTests = pgTable(
+  "words_to_tests",
+  {
+    wordId: text("word_id")
+      .notNull()
+      .references(() => words.id),
+    testId: text("test_id")
+      .notNull()
+      .references(() => tests.id),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.wordId, t.testId] }),
+  })
+);
+
+export const wordsToTestsRelations = relations(wordsToTests, ({ one }) => ({
+  word: one(words, {
+    fields: [wordsToTests.wordId],
+    references: [words.id],
+  }),
+  test: one(tests, {
+    fields: [wordsToTests.testId],
+    references: [tests.id],
+  }),
+}));
+
+export const insertWordToTestSchema = createInsertSchema(wordsToTests);

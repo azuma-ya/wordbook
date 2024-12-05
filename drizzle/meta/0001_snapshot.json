@@ -1,6 +1,6 @@
 {
-  "id": "010947d0-23cc-4721-869e-6071d9b91300",
-  "prevId": "1499f8f5-f157-4fe4-ad25-e0d303892d45",
+  "id": "7dd94e37-1fe4-440c-b78d-9a6a91b4727f",
+  "prevId": "73dfeedd-a73c-47a0-9cbe-302a628f2c75",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -196,102 +196,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.example": {
-      "name": "example",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "word_id": {
-          "name": "word_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "sentence": {
-          "name": "sentence",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "translation": {
-          "name": "translation",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "example_word_id_words_word_fk": {
-          "name": "example_word_id_words_word_fk",
-          "tableFrom": "example",
-          "tableTo": "words",
-          "columnsFrom": [
-            "word_id"
-          ],
-          "columnsTo": [
-            "word"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.learning_points": {
-      "name": "learning_points",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "word": {
-          "name": "word",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "point": {
-          "name": "point",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "learning_points_word_words_word_fk": {
-          "name": "learning_points_word_words_word_fk",
-          "tableFrom": "learning_points",
-          "tableTo": "words",
-          "columnsFrom": [
-            "word"
-          ],
-          "columnsTo": [
-            "word"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.session": {
       "name": "session",
       "schema": "",
@@ -337,42 +241,42 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.synonyms": {
-      "name": "synonyms",
+    "public.tests": {
+      "name": "tests",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
-        "word": {
-          "name": "word",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "difference": {
-          "name": "difference",
+        "title": {
+          "name": "title",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "synonyms_word_words_word_fk": {
-          "name": "synonyms_word_words_word_fk",
-          "tableFrom": "synonyms",
-          "tableTo": "words",
+        "tests_user_id_user_id_fk": {
+          "name": "tests_user_id_user_id_fk",
+          "tableFrom": "tests",
+          "tableTo": "user",
           "columnsFrom": [
-            "word"
+            "user_id"
           ],
           "columnsTo": [
-            "word"
+            "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -476,10 +380,16 @@
       "name": "words",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
         "word": {
           "name": "word",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "meaning": {
@@ -488,16 +398,97 @@
           "primaryKey": false,
           "notNull": true
         },
-        "part_of_speech": {
-          "name": "part_of_speech",
+        "explanation": {
+          "name": "explanation",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "synonyms": {
+          "name": "synonyms",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.words_to_tests": {
+      "name": "words_to_tests",
+      "schema": "",
+      "columns": {
+        "word_id": {
+          "name": "word_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "test_id": {
+          "name": "test_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "words_to_tests_word_id_words_id_fk": {
+          "name": "words_to_tests_word_id_words_id_fk",
+          "tableFrom": "words_to_tests",
+          "tableTo": "words",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "words_to_tests_test_id_tests_id_fk": {
+          "name": "words_to_tests_test_id_tests_id_fk",
+          "tableFrom": "words_to_tests",
+          "tableTo": "tests",
+          "columnsFrom": [
+            "test_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "words_to_tests_word_id_test_id_pk": {
+          "name": "words_to_tests_word_id_test_id_pk",
+          "columns": [
+            "word_id",
+            "test_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
