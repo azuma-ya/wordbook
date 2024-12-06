@@ -8,7 +8,7 @@ type Props = {
 const TestItem = ({ data }: Props) => {
   return (
     <div>
-      <h2 className="font-semibold text-xl">{data.title}</h2>
+      <h2 className="font-semibold text-xl text-start">{data.title}</h2>
     </div>
   );
 };

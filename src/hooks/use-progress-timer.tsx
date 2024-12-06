@@ -11,17 +11,16 @@ const useProgressTimer = (
 
   const pauseTimer = useCallback(() => {
     setIsRunning(false);
-    console.log("click");
   }, []);
 
-  const resumeTimer = () => {
+  const resumeTimer = useCallback(() => {
     setIsRunning(true);
-  };
+  }, []);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     setTimeLeft(time);
     setIsRunning(true);
-  };
+  }, [time]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;

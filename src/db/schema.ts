@@ -41,7 +41,7 @@ export const accounts = pgTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-  }),
+  })
 );
 
 export const sessions = pgTable("session", {
@@ -63,7 +63,7 @@ export const verificationTokens = pgTable(
     compositePk: primaryKey({
       columns: [verificationToken.identifier, verificationToken.token],
     }),
-  }),
+  })
 );
 
 export const authenticators = pgTable(
@@ -84,7 +84,7 @@ export const authenticators = pgTable(
     compositePK: primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),
-  }),
+  })
 );
 
 export const words = pgTable("words", {
@@ -94,7 +94,10 @@ export const words = pgTable("words", {
   word: text("word").notNull(),
   meaning: text("meaning").notNull(),
   explanation: text("explanation").notNull(),
-  synonyms: text("synonyms").array().notNull().default(sql`'{}'::text[]`),
+  synonyms: text("synonyms")
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
 });
 
 export const wordsRelations = relations(words, ({ many }) => ({
@@ -127,6 +130,7 @@ export const wordsToTests = pgTable("words_to_tests", {
     .notNull()
     .references(() => words.id),
   testId: text("test_id").references(() => tests.id),
+  level: integer("level").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

@@ -3,17 +3,13 @@ import z from "zod";
 import { Hono } from "hono";
 
 import { authMiddleware } from "@/lib/auth-middleware";
-import { tests, words, wordsToTests } from "@/db/schema";
+import { insertTestSchema, tests, words, wordsToTests } from "@/db/schema";
 import { db } from "@/db/drizzle";
-import { eq } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 
 const app = new Hono()
   .get("/", authMiddleware, async (c) => {
     const session = c.get("session");
-
-    if (!session) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
 
     if (!session.user?.id) {
       return c.json({ error: "User not found" }, 404);
@@ -34,12 +30,7 @@ const app = new Hono()
     authMiddleware,
     zValidator("param", z.object({ id: z.string().optional() })),
     async (c) => {
-      const session = c.get("session");
       const { id } = c.req.valid("param");
-
-      if (!session) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
 
       if (!id) {
         return c.json({ error: "Missing id" }, 404);
@@ -56,7 +47,83 @@ const app = new Hono()
           : await query;
 
       return c.json({ data });
-    },
+    }
+  )
+  .get(
+    "/:id/level-counts",
+    authMiddleware,
+    zValidator("param", z.object({ id: z.string().optional() })),
+    async (c) => {
+      const { id } = c.req.valid("param");
+
+      if (!id) {
+        return c.json({ error: "Missing id" }, 404);
+      }
+
+      const data = await db
+        .select({
+          level: wordsToTests.level,
+          count: count(),
+        })
+        .from(wordsToTests)
+        .groupBy(wordsToTests.level);
+
+      return c.json({ data });
+    }
+  )
+  .post(
+    "/",
+    authMiddleware,
+    zValidator(
+      "json",
+      insertTestSchema.pick({ title: true }).merge(
+        z.object({
+          ids: z.array(z.string()),
+        })
+      )
+    ),
+    async (c) => {
+      const session = c.get("session");
+      const { title, ids } = c.req.valid("json");
+
+      const data = await db.transaction(async (tx) => {
+        const [data] = await tx
+          .insert(tests)
+          .values({ title, userId: session.user!.id! })
+          .returning();
+
+        ids.length > 0 &&
+          (await tx
+            .insert(wordsToTests)
+            .values(ids.map((id) => ({ wordId: id, testId: data.id }))));
+
+        return data;
+      });
+
+      return c.json({ data });
+    }
+  )
+  .post(
+    "/:id/adjust-level",
+    authMiddleware,
+    zValidator("param", z.object({ id: z.string().optional() })),
+    zValidator("json", z.object({ adjustment: z.number() })),
+    async (c) => {
+      const { adjustment } = c.req.valid("json");
+      const { id } = c.req.valid("param");
+
+      if (!id) {
+        return c.json({ error: "Missing id" }, 404);
+      }
+
+      const [data] = await db
+        .update(wordsToTests)
+        .set({ level: sql`GREATEST(${wordsToTests.level} + ${adjustment}, 0)` })
+        .where(eq(wordsToTests.id, id))
+        .returning();
+
+      return c.json({ data });
+    }
   );
 
 export default app;

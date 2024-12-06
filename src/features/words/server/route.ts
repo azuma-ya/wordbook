@@ -45,7 +45,7 @@ const app = new Hono()
         .where(eq(type === "id" ? words.id : words.word, target));
 
       return c.json({ data });
-    },
+    }
   )
   .post(
     "/",
@@ -94,33 +94,13 @@ const app = new Hono()
 ### 例文と日本語訳
 1. **She decided to submit her application before the deadline.**
    - 彼女は締め切り前に申請書を提出することに決めた。
-2. **Please submit your reports by Friday.**
-   - 金曜日までにレポートを提出してください。
-3. **He submitted to the ruling of the court.**
-   - 彼はその裁判所の判決に従った。
-4. **They refused to submit to pressure from management.**
-   - 彼らは経営陣の圧力に屈することを拒否した。
-5. **The team will submit their proposal at the next meeting.**
-   - チームは次の会議で提案を提出することになる。
 
 ### 類義語とその違い
 - **Present**: "Present" は何かを公開したり、公式に誰かに見せたりする意味を持ちますが、「submit」に比べてフォーマルなニュアンスは弱く、表面的な行動を指します。
-- **Offer**: 「Offer」は提案するニュアンスが強く、相手の承認や承諾を伴うかどうかに関係しています。
-- **Propose**: 提案や意見の提示を意味し、「submit」に比べると更なる議論や検討を想定しています。
-- **Give**: 単純に物を渡す行為を指すことが多く、「submit」ほどの公式感はありません。
-- **Hand in**: "Hand in" は何かを提出する意味ですが、特に教育の文脈で使用され、口語的です。
 
 ### 類義語の例文
 - **Present**: She *presented* her findings at the conference.
   - 彼女は会議で彼女の調査結果を発表した。
-- **Offer**: He *offered* his help with the project.
-  - 彼はプロジェクトでの助力を申し出た。
-- **Propose**: They *proposed* a new plan during the meeting.
-  - 会議の間に彼らは新しい計画を提案した。
-- **Give**: Please *give* your completed forms to the teacher.
-  - 完了した書類を先生に渡してください。
-- **Hand in**: Students need to *hand in* their essays by Monday.
-  - 学生は月曜日までにエッセイを提出する必要がある。
 
 これらの違いを理解することで、適切な状況で正確な単語を選択できます。`,
           },
@@ -147,7 +127,7 @@ const app = new Hono()
       });
 
       return c.json({ data });
-    },
+    }
   );
 
 export const wordCustomApi = new Hono().get(
@@ -161,7 +141,7 @@ export const wordCustomApi = new Hono().get(
     }
 
     return c.json({ data: "/api/words:search" });
-  },
+  }
 );
 
 export default app;
