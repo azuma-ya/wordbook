@@ -1,0 +1,2 @@
+ALTER TABLE "words" ADD COLUMN "user_id" text DEFAULT '634d4935-96be-4a71-824d-d3d298ee9e5c' NOT NULL;--> statement-breakpoint
+ALTER TABLE "words" ADD COLUMN "created_at" timestamp DEFAULT now() NOT NULL;

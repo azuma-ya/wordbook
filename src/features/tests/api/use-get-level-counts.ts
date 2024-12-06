@@ -4,7 +4,7 @@ import { client } from "@/lib/hono";
 const useGetLevelCounts = (id?: string) => {
   const query = useQuery({
     enabled: !!id,
-    queryKey: ["level"],
+    queryKey: ["level", { id }],
     queryFn: async () => {
       const response = await client.api.tests[":id"]["level-counts"].$get({
         param: { id },

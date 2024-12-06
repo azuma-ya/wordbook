@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 
-const useGetTest = (id?: string) => {
+const useGetQuestions = (testId?: string) => {
   const query = useQuery({
-    enabled: !!id,
-    queryKey: ["test", { id }],
+    enabled: !!testId,
+    queryKey: ["test"],
     queryFn: async () => {
-      const response = await client.api.tests[":id"].$get({ param: { id } });
+      const response = await client.api.tests[":id"].questions.$get({
+        param: { id: testId },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch tests");
       }
@@ -18,4 +20,4 @@ const useGetTest = (id?: string) => {
   return query;
 };
 
-export default useGetTest;
+export default useGetQuestions;

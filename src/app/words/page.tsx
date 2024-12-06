@@ -20,7 +20,7 @@ const WordsPage = () => {
   }
 
   return (
-    <div className="h-full">
+    <div className="h-full py-8">
       <ul className="space-y-2">
         {data?.map((word) => (
           <li key={word.id} className="space-y-2">

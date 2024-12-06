@@ -5,10 +5,12 @@ import { Separator } from "@/components/ui/separator";
 import useGetTests from "@/features/tests/api/use-get-tests";
 import TestItem from "@/features/tests/components/test-item";
 import useEditSetting from "@/features/tests/hooks/use-edit-setting";
+import useEditTest from "@/features/tests/hooks/use-edit-test";
 import useNewTest from "@/features/tests/hooks/use-new-test";
 
 const TestsPage = () => {
   const newTest = useNewTest();
+  const editTest = useEditTest();
   const editSetting = useEditSetting();
   const testsQuery = useGetTests();
   const tests = testsQuery.data;
@@ -16,6 +18,7 @@ const TestsPage = () => {
   const defautlTest = {
     id: "all",
     title: "All",
+    wordCount: 1,
   };
 
   return (
@@ -32,7 +35,11 @@ const TestsPage = () => {
           <li key={test.id} className="space-y-2">
             <button
               type="button"
-              onClick={() => editSetting.onOpen(test.id)}
+              onClick={() =>
+                test.wordCount === 0
+                  ? editTest.onOpen(test.id)
+                  : editSetting.onOpen(test.id)
+              }
               className="w-full"
             >
               <TestItem data={test} />

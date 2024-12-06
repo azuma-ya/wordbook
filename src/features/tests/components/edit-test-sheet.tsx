@@ -9,11 +9,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import useNewTest from "../hooks/use-new-test";
 import useCreateTest from "../api/use-create-test";
-import {} from "@/components/ui/form";
 import useGetWords from "@/features/words/api/use-get-words";
+import useEditTest from "../hooks/use-edit-test";
 import TestForm from "./test-form";
+import useGetTest from "../api/use-get-test";
 
 const formSchema = z.object({
   title: z
@@ -24,8 +24,11 @@ const formSchema = z.object({
 
 type FromValues = z.input<typeof formSchema>;
 
-const NewTestSheet = () => {
-  const { isOpen, onClose } = useNewTest();
+const EditTestSheet = () => {
+  const { id, isOpen, onClose } = useEditTest();
+
+  const testQuery = useGetTest(id);
+  const test = testQuery.data;
 
   const wordsQuery = useGetWords();
   const words = wordsQuery.data;
@@ -45,17 +48,19 @@ const NewTestSheet = () => {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
-          <SheetTitle>テスト作成</SheetTitle>
+          <SheetTitle>テスト編集</SheetTitle>
           <SheetDescription>テスト名と単語を選択してください</SheetDescription>
         </SheetHeader>
         <TestForm
+          id={id}
           onSubmit={handleSubmit}
           words={words ?? []}
           disabled={isPending}
+          defaultValues={test}
         />
       </SheetContent>
     </Sheet>
   );
 };
 
-export default NewTestSheet;
+export default EditTestSheet;

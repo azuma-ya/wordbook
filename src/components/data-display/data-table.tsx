@@ -6,7 +6,8 @@ import type {
   ColumnDef,
   ColumnFiltersState,
   Row,
-  SortingState} from "@tanstack/react-table";
+  SortingState,
+} from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -32,8 +33,8 @@ import useConfirm from "@/hooks/use-confirm";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  filterKey: string;
-  onDelete: (rows: Row<TData>[]) => void;
+  filterKey?: string;
+  onDelete?: (rows: Row<TData>[]) => void;
   disabled?: boolean;
 }
 
@@ -45,8 +46,8 @@ export function DataTable<TData, TValue>({
   disabled,
 }: DataTableProps<TData, TValue>) {
   const [ConfirmationDailog, confirm] = useConfirm(
-    "Are your sure?",
-    "You are about to perform a bluk delete.",
+    "本当に実行しますか?",
+    "これは複数削除です",
   );
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -76,15 +77,19 @@ export function DataTable<TData, TValue>({
     <div>
       <ConfirmationDailog />
       <div className="flex items-center py-4">
-        <Input
-          placeholder={`Filter ${filterKey}...`}
-          value={(table.getColumn(filterKey)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(filterKey)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+        {filterKey && (
+          <Input
+            placeholder={`検索 ${filterKey}...`}
+            value={
+              (table.getColumn(filterKey)?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn(filterKey)?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+        {table.getFilteredSelectedRowModel().rows.length > 0 && onDelete && (
           <Button
             disabled={disabled}
             size="sm"
@@ -100,7 +105,7 @@ export function DataTable<TData, TValue>({
             }}
           >
             <Trash className="mr-2 size-4" />
-            Delete ({table.getFilteredSelectedRowModel().rows.length})
+            削除 ({table.getFilteredSelectedRowModel().rows.length})
           </Button>
         )}
       </div>
@@ -129,7 +134,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && "選択中"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -147,7 +152,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  ありません
                 </TableCell>
               </TableRow>
             )}
@@ -156,8 +161,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} 個選択
         </div>
         <Button
           variant="outline"
@@ -165,7 +169,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          前へ
         </Button>
         <Button
           variant="outline"
@@ -173,7 +177,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          次へ
         </Button>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { Hono } from "hono";
 import { authMiddleware } from "@/lib/auth-middleware";
 import { insertTestSchema, tests, words, wordsToTests } from "@/db/schema";
 import { db } from "@/db/drizzle";
-import { count, eq, sql } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 
 const app = new Hono()
   .get("/", authMiddleware, async (c) => {
@@ -19,14 +19,40 @@ const app = new Hono()
       .select({
         id: tests.id,
         title: tests.title,
+        wordCount: sql<number>`COUNT(${wordsToTests.id})`.mapWith(Number),
       })
       .from(tests)
-      .where(eq(tests.userId, session.user.id));
+      .leftJoin(wordsToTests, eq(wordsToTests.testId, tests.id))
+      .where(eq(tests.userId, session.user.id))
+      .groupBy(tests.id, tests.title);
 
     return c.json({ data });
   })
   .get(
     "/:id",
+    authMiddleware,
+    zValidator("param", z.object({ id: z.string().optional() })),
+    async (c) => {
+      const session = c.get("session");
+      const { id } = c.req.valid("param");
+
+      if (!id) {
+        return c.json({ error: "Missing id" }, 404);
+      }
+
+      if (id === "all") {
+        return c.json({
+          data: { id: "all", userId: session.user?.id!, title: "ALL" },
+        });
+      }
+
+      const [data] = await db.select().from(tests).where(eq(tests.id, id));
+
+      return c.json({ data });
+    }
+  )
+  .get(
+    "/:id/questions",
     authMiddleware,
     zValidator("param", z.object({ id: z.string().optional() })),
     async (c) => {
@@ -60,13 +86,18 @@ const app = new Hono()
         return c.json({ error: "Missing id" }, 404);
       }
 
-      const data = await db
+      const query = db
         .select({
           level: wordsToTests.level,
           count: count(),
         })
         .from(wordsToTests)
         .groupBy(wordsToTests.level);
+
+      const data =
+        id !== "all"
+          ? await query.where(eq(wordsToTests.testId, id))
+          : await query;
 
       return c.json({ data });
     }
@@ -90,6 +121,45 @@ const app = new Hono()
         const [data] = await tx
           .insert(tests)
           .values({ title, userId: session.user!.id! })
+          .returning();
+
+        ids.length > 0 &&
+          (await tx
+            .insert(wordsToTests)
+            .values(ids.map((id) => ({ wordId: id, testId: data.id }))));
+
+        return data;
+      });
+
+      return c.json({ data });
+    }
+  )
+  .post(
+    "/:id",
+    authMiddleware,
+    zValidator("param", z.object({ id: z.string().optional() })),
+    zValidator(
+      "json",
+      insertTestSchema.pick({ title: true }).merge(
+        z.object({
+          ids: z.array(z.string()),
+        })
+      )
+    ),
+    async (c) => {
+      const session = c.get("session");
+      const { id } = c.req.valid("param");
+      const { title, ids } = c.req.valid("json");
+
+      if (!id) {
+        return c.json({ error: "Missing id" }, 404);
+      }
+
+      const data = await db.transaction(async (tx) => {
+        const [data] = await tx
+          .update(tests)
+          .set({ title })
+          .where(and(eq(tests.id, id), eq(tests.userId, session.user?.id!)))
           .returning();
 
         ids.length > 0 &&

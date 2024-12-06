@@ -8,12 +8,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { label } from "@/lib/utils";
 
 interface Props {
   data: {
     level: number;
     count: number;
   }[];
+  title?: string;
 }
 
 const chartConfig = {
@@ -39,29 +41,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const Chart = ({ data }: Props) => {
+const Chart = ({ data, title }: Props) => {
   const total = data.reduce((acc, item) => acc + item.count, 0);
-
-  const label = (level: number) => {
-    switch (level) {
-      case -1:
-        return "苦手";
-      case 0:
-        return "まだ";
-      case 1:
-        return "うろ覚え";
-      case 2:
-        return "ほぼ覚えた";
-      case 3:
-        return "覚えた";
-      default:
-        return "覚えた";
-    }
-  };
 
   const transformedData = data.reduce(
     (acc, { level, count }) => {
-      acc[label(level)] = count;
+      acc[label(level)] = (acc[label(level)] || 0) + count;
       return acc;
     },
     {} as Record<string, number>,
@@ -92,7 +77,7 @@ const Chart = ({ data }: Props) => {
                       y={(viewBox.cy || 0) + 6}
                       className="fill-foreground text-2xl font-bold"
                     >
-                      {`${total.toLocaleString()}問`}
+                      {title ?? `${total.toLocaleString()}問`}
                     </tspan>
                   </text>
                 );

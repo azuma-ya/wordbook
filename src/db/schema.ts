@@ -91,6 +91,9 @@ export const words = pgTable("words", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   word: text("word").notNull(),
   meaning: text("meaning").notNull(),
   explanation: text("explanation").notNull(),
@@ -98,6 +101,7 @@ export const words = pgTable("words", {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const wordsRelations = relations(words, ({ many }) => ({

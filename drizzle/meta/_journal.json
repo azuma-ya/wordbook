@@ -29,6 +29,20 @@
       "when": 1733466156950,
       "tag": "0003_breezy_komodo",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1733503951029,
+      "tag": "0004_chunky_lyja",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1733503986924,
+      "tag": "0005_silky_azazel",
+      "breakpoints": true
     }
   ]
 }

@@ -48,12 +48,12 @@ const WordIdPage = () => {
   }
 
   return (
-    <div className="my-8">
+    <div className="py-8">
       <div className="space-y-4">
         <h2 className="font-bold text-2xl">{data?.word}</h2>
         {data?.synonyms && (
           <ScrollArea>
-            <ul className="flex gap-2 items-center">
+            <ul className="flex gap-2 items-center pb-2">
               <LinkIcon className="block size-4" />
               {data.synonyms.map((synonym) => (
                 <li key={synonym} className="shrink-0">

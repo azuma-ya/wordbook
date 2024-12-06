@@ -52,6 +52,7 @@ const app = new Hono()
     authMiddleware,
     zValidator("json", insertWordSchema.pick({ word: true })),
     async (c) => {
+      const session = c.get("session");
       const { word } = c.req.valid("json");
 
       const [existingWord] = await db
@@ -118,7 +119,7 @@ const app = new Hono()
       const data = await db.transaction(async (tx) => {
         const [data] = await tx
           .insert(words)
-          .values({ ...response, word })
+          .values({ ...response, word, userId: session.user?.id! })
           .returning();
 
         await tx.insert(wordsToTests).values({

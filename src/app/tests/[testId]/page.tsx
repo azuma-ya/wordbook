@@ -1,29 +1,31 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useAdjustLevel from "@/features/tests/api/use-adjust-level";
 import useGetLevelCounts from "@/features/tests/api/use-get-level-counts";
-import useGetTest from "@/features/tests/api/use-get-test";
+import useGetQuestions from "@/features/tests/api/use-get-questions";
 import Chart from "@/features/tests/components/chart";
 import WordItem from "@/features/words/components/word-item";
 import useProgressTimer from "@/hooks/use-progress-timer";
-import Link from "next/link";
+import { label } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
 const TestIdPage = () => {
   const searchParams = useSearchParams();
-  const sleep = Number.parseInt(searchParams.get("sleep") ?? "5");
-  const limit = Number.parseInt(searchParams.get("limit") ?? "30");
+  const sleep = Number.parseInt(searchParams.get("sleep") ?? "2");
+  const limit = Number.parseInt(searchParams.get("limit") ?? "10");
   const { testId } = useParams<{ testId: string }>();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isShowAnswer, setIsAnswer] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const testQuery = useGetTest(testId);
-  const test = testQuery.data;
+  const questionsQuery = useGetQuestions(testId);
+  const questions = questionsQuery.data;
 
   const levelCountsQuery = useGetLevelCounts(testId);
   const levelCounts = levelCountsQuery.data;
@@ -66,8 +68,16 @@ const TestIdPage = () => {
     setActiveIndex((prev) => prev + 1);
   };
 
-  const word = test?.[activeIndex]?.words;
-  const wordTest = test?.[activeIndex]?.words_to_tests;
+  const word = questions?.[activeIndex]?.words;
+  const wordTest = questions?.[activeIndex]?.words_to_tests;
+
+  if (questionsQuery.isLoading || !questions) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
 
   // Result page
   if (!word) {
@@ -75,11 +85,16 @@ const TestIdPage = () => {
       <div className="h-full space-y-4">
         <Chart data={levelCounts ?? []} />
         <ul className="space-y-2">
-          {test?.map((item) => (
+          {questions?.map((item) => (
             <li key={item.words.id} className="space-y-2">
-              <Link href={`/words/${item.words.word}`}>
+              <div className="flex gap-2 items-center">
+                <div className="basis-1/4">
+                  <Badge variant="secondary" className="h-6">
+                    {label(item.words_to_tests.level)}
+                  </Badge>
+                </div>
                 <WordItem data={item.words} />
-              </Link>
+              </div>
               <Separator />
             </li>
           ))}

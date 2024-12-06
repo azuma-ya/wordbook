@@ -37,17 +37,27 @@ export const columns: ColumnDef<ResponseType>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: "word",
     header: ({ column }) => {
       return (
         <Button
+          type="button"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          英単語
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
+    cell: ({ row }) => (
+      <button
+        type="button"
+        onClick={() => row.toggleSelected(!row.getIsSelected())}
+        className="size-full text-start"
+      >
+        {row.original.word}
+      </button>
+    ),
   },
 ];

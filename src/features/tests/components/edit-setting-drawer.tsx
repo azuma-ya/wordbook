@@ -22,9 +22,9 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import useGetLevelCounts from "../api/use-get-level-counts";
 import Chart from "./chart";
+import useGetTest from "../api/use-get-test";
 
 const formSchema = z.object({
   sleep: z.coerce
@@ -43,12 +43,15 @@ const EditSettingDrawer = () => {
   const router = useRouter();
   const { id, isOpen, onClose } = useEditSetting();
 
+  const testQuery = useGetTest(id);
+  const test = testQuery.data;
+
   const levelCountsQuery = useGetLevelCounts(id);
   const levelCounts = levelCountsQuery.data;
 
   const form = useForm<FromValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { sleep: 5, limit: 30 },
+    defaultValues: { sleep: 2, limit: 10 },
   });
 
   const handleSubmit = (values: FromValues) => {
@@ -63,7 +66,7 @@ const EditSettingDrawer = () => {
           <DrawerTitle>テスト設定</DrawerTitle>
           <DrawerDescription>時間を変更できます</DrawerDescription>
         </DrawerHeader>
-        <Chart data={levelCounts ?? []} />
+        <Chart data={levelCounts ?? []} title={test?.title} />
         <DrawerFooter>
           <Form {...form}>
             <form
@@ -78,13 +81,28 @@ const EditSettingDrawer = () => {
                     <FormItem>
                       <FormLabel>次に進むまでの時間</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="sleep..."
-                          type="number"
-                          {...field}
-                        />
+                        <div className="flex gap-4 items-center justify-center">
+                          <input {...field} className="hidden" />
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              field.onChange(Math.max(field.value! - 1, 0))
+                            }
+                          >
+                            -1
+                          </Button>
+                          <Button disabled variant="outline">
+                            {field.value}
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={() => field.onChange(field.value! + 1)}
+                          >
+                            +1
+                          </Button>
+                        </div>
                       </FormControl>
-                      <FormMessage className="ml-10" />
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -95,13 +113,28 @@ const EditSettingDrawer = () => {
                     <FormItem>
                       <FormLabel>制限時間</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="limit..."
-                          type="number"
-                          {...field}
-                        />
+                        <div className="flex gap-4 items-center justify-center">
+                          <input {...field} className="hidden" />
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              field.onChange(Math.max(field.value! - 1, 0))
+                            }
+                          >
+                            -1
+                          </Button>
+                          <Button disabled variant="outline">
+                            {field.value}
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={() => field.onChange(field.value! + 1)}
+                          >
+                            +1
+                          </Button>
+                        </div>
                       </FormControl>
-                      <FormMessage className="ml-10" />
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
