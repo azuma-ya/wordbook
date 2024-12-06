@@ -5,6 +5,8 @@ import { handle } from "hono/vercel";
 import words, { wordCustomApi } from "@/features/words/server/route";
 import tests from "@/features/tests/server/route";
 
+export const maxDuration = 59;
+
 const app = new Hono().basePath("/api");
 
 app.onError((err, c) => {
