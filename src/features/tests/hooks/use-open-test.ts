@@ -1,17 +1,17 @@
 import { create } from "zustand";
 
-type EditTestState = {
+type OpenTestState = {
   id?: string;
   isOpen: boolean;
   onOpen: (id: string) => void;
   onClose: () => void;
 };
 
-const useEditTest = create<EditTestState>((set) => ({
+const useOpenTest = create<OpenTestState>((set) => ({
   id: undefined,
   isOpen: false,
   onOpen: (id: string) => set({ isOpen: true, id }),
   onClose: () => set({ isOpen: false, id: undefined }),
 }));
 
-export default useEditTest;
+export default useOpenTest;

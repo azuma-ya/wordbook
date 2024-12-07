@@ -45,7 +45,7 @@ const app = new Hono()
         .where(eq(type === "id" ? words.id : words.word, target));
 
       return c.json({ data });
-    }
+    },
   )
   .post(
     "/",
@@ -128,7 +128,7 @@ const app = new Hono()
       });
 
       return c.json({ data });
-    }
+    },
   );
 
 export const wordCustomApi = new Hono().get(
@@ -142,7 +142,7 @@ export const wordCustomApi = new Hono().get(
     }
 
     return c.json({ data: "/api/words:search" });
-  }
+  },
 );
 
 export default app;

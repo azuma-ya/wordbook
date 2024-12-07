@@ -4,6 +4,7 @@ import { handle } from "hono/vercel";
 
 import words, { wordCustomApi } from "@/features/words/server/route";
 import tests from "@/features/tests/server/route";
+import questions from "@/features/questions/server/route";
 
 export const maxDuration = 59;
 
@@ -20,9 +21,11 @@ app.onError((err, c) => {
 const routes = app
   .route("/words", words)
   .route("/tests", tests)
+  .route("/questions", questions)
   .route("/", wordCustomApi);
 
 export const GET = handle(app);
+export const PUT = handle(app);
 export const POST = handle(app);
 export const PATCH = handle(app);
 export const DELETE = handle(app);

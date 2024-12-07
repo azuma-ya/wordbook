@@ -16,12 +16,14 @@ import { DataTable } from "@/components/data-display/data-table";
 import { columns } from "./columns";
 import type { client } from "@/lib/hono";
 import type { InferResponseType } from "hono/client";
+import type { Row } from "@tanstack/react-table";
 
 const formSchema = z.object({
   title: z
     .string({ required_error: "テスト名を入力してください..." })
     .trim()
     .min(1, { message: "テスト名を入力してください..." }),
+  ids: z.string().array(),
 });
 
 type FromValues = z.input<typeof formSchema>;
@@ -52,6 +54,15 @@ const TransactionForm = ({
     onDelete?.();
   };
 
+  const handleSelected = (
+    rows: Row<
+      InferResponseType<typeof client.api.words.$get, 200>["data"][0]
+    >[],
+  ) => {
+    const ids = rows.map((row) => row.original.id);
+    form.setValue("ids", ids);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
@@ -61,13 +72,17 @@ const TransactionForm = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Title..." disabled={disabled} {...field} />
+                <Input placeholder="テスト名" disabled={disabled} {...field} />
               </FormControl>
               <FormMessage className="ml-10" />
             </FormItem>
           )}
         />
-        <DataTable columns={columns} data={words} />
+        <DataTable
+          columns={columns}
+          data={words}
+          onSelectedRow={handleSelected}
+        />
         <Button className="w-full">{id ? "更新" : "作成"}</Button>
         {!!id && (
           <Button

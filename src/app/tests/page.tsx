@@ -5,12 +5,12 @@ import { Separator } from "@/components/ui/separator";
 import useGetTests from "@/features/tests/api/use-get-tests";
 import TestItem from "@/features/tests/components/test-item";
 import useEditSetting from "@/features/tests/hooks/use-edit-setting";
-import useEditTest from "@/features/tests/hooks/use-edit-test";
 import useNewTest from "@/features/tests/hooks/use-new-test";
+import useOpenTest from "@/features/tests/hooks/use-open-test";
 
 const TestsPage = () => {
   const newTest = useNewTest();
-  const editTest = useEditTest();
+  const editTest = useOpenTest();
   const editSetting = useEditSetting();
   const testsQuery = useGetTests();
   const tests = testsQuery.data;

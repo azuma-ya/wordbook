@@ -20,6 +20,7 @@ const formSchema = z.object({
     .string({ required_error: "テスト名を入力してください..." })
     .trim()
     .min(1, { message: "テスト名を入力してください..." }),
+  ids: z.string().array(),
 });
 
 type FromValues = z.input<typeof formSchema>;
@@ -33,12 +34,7 @@ const NewTestSheet = () => {
   const { mutate: createTest, isPending } = useCreateTest();
 
   const handleSubmit = (values: FromValues) => {
-    createTest(
-      { ...values, ids: [] },
-      {
-        onSuccess: onClose,
-      },
-    );
+    createTest(values, { onSuccess: onClose });
   };
 
   return (

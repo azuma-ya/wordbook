@@ -1,6 +1,6 @@
 {
-  "id": "7df3b186-b10c-4983-825e-63a1b564beb8",
-  "prevId": "5faa0803-ebb8-4107-9ceb-d5e6f20d180e",
+  "id": "2ea2fd0e-f6ec-4ddd-a69d-a01c5b905272",
+  "prevId": "7df3b186-b10c-4983-825e-63a1b564beb8",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -252,7 +252,7 @@
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -410,7 +410,7 @@
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -481,7 +481,7 @@
           "tableTo": "tests",
           "columnsFrom": ["test_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

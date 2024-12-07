@@ -36,6 +36,7 @@ interface DataTableProps<TData, TValue> {
   filterKey?: string;
   onDelete?: (rows: Row<TData>[]) => void;
   disabled?: boolean;
+  onSelectedRow?: (rows: Row<TData>[]) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   filterKey,
   onDelete,
   disabled,
+  onSelectedRow,
 }: DataTableProps<TData, TValue>) {
   const [ConfirmationDailog, confirm] = useConfirm(
     "本当に実行しますか?",
@@ -65,13 +67,19 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: (newRowSelection) => {
+      setRowSelection(newRowSelection);
+    },
     state: {
       sorting,
       columnFilters,
       rowSelection,
     },
   });
+
+  React.useEffect(() => {
+    rowSelection && onSelectedRow?.(table.getFilteredSelectedRowModel().rows);
+  }, [onSelectedRow, table.getFilteredSelectedRowModel, rowSelection]);
 
   return (
     <div>

@@ -25,6 +25,8 @@ import {
 import useGetLevelCounts from "../api/use-get-level-counts";
 import Chart from "./chart";
 import useGetTest from "../api/use-get-test";
+import useOpenTest from "../hooks/use-open-test";
+import { MoreVertical } from "lucide-react";
 
 const formSchema = z.object({
   sleep: z.coerce
@@ -42,6 +44,7 @@ type FromValues = z.input<typeof formSchema>;
 const EditSettingDrawer = () => {
   const router = useRouter();
   const { id, isOpen, onClose } = useEditSetting();
+  const openTest = useOpenTest();
 
   const testQuery = useGetTest(id);
   const test = testQuery.data;
@@ -65,6 +68,16 @@ const EditSettingDrawer = () => {
         <DrawerHeader>
           <DrawerTitle>テスト設定</DrawerTitle>
           <DrawerDescription>時間を変更できます</DrawerDescription>
+          {id !== "all" && (
+            <Button
+              onClick={() => openTest.onOpen(id!)}
+              variant="outline"
+              size="icon"
+              className="absolute right-4"
+            >
+              <MoreVertical />
+            </Button>
+          )}
         </DrawerHeader>
         <Chart data={levelCounts ?? []} title={test?.title} />
         <DrawerFooter>

@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import useAdjustLevel from "@/features/tests/api/use-adjust-level";
+import useAdjustLevel from "@/features/questions/api/use-adjust-level";
 import useGetLevelCounts from "@/features/tests/api/use-get-level-counts";
 import useGetQuestions from "@/features/tests/api/use-get-questions";
 import Chart from "@/features/tests/components/chart";

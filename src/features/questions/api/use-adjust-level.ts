@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { client } from "@/lib/hono";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.tests)[":id"]["adjust-level"]["$post"]
+  (typeof client.api.questions)[":id"]["adjust-level"]["$post"]
 >;
 type RequestType = {
   adjustment: number;
@@ -17,7 +17,7 @@ const useAdjustLevel = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (req: RequestType) => {
-      const response = await client.api.tests[":id"]["adjust-level"].$post({
+      const response = await client.api.questions[":id"]["adjust-level"].$post({
         param: { id: req.id },
         json: { adjustment: req.adjustment },
       });

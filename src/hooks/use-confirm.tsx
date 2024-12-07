@@ -45,9 +45,9 @@ const useConfirm = (
         </DialogHeader>
         <DialogFooter>
           <Button onClick={handleChancel} variant="outline">
-            Cancel
+            やめる
           </Button>
-          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button onClick={handleConfirm}>確認した</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
