@@ -35,11 +35,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       >
         {Icon && type !== "file" && iconProps?.behavior === "prepend" && (
           <Icon
+            {...iconProps}
             className={cn(
               "mr-3 h-4 w-4 text-muted-foreground",
               iconProps?.className,
             )}
-            {...iconProps}
           />
         )}
         <input

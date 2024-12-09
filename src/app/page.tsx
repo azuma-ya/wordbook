@@ -2,7 +2,7 @@
 
 import { redirect, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowUp, Loader2 } from "lucide-react";
+import { ArrowUp, ClipboardPaste, Loader2 } from "lucide-react";
 import { Search } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   word: z
@@ -69,30 +70,52 @@ const WordNewPage = () => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      className="focus-within:ring-0 border-none shadow-none"
+                      className="focus-within:ring-0 border-none shadow-none text-lg py-2"
                       placeholder="word..."
-                      iconProps={{ behavior: "prepend" }}
+                      iconProps={{ behavior: "prepend", className: "size-5" }}
                       icon={Search}
                       disabled={isPending}
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="ml-10" />
                 </FormItem>
               )}
             />
-            <button
-              type="submit"
-              className="size-5 bg-primary rounded-full flex items-center justify-center ml-auto mr-2"
-              disabled={isPending}
-            >
-              {isPending ? (
-                <Loader2 className="size-4 text-background animate-spin" />
-              ) : (
-                <ArrowUp className="size-4 text-background" />
-              )}
-            </button>
+            <div className="px-3 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={async () => {
+                  const text = await navigator.clipboard.readText();
+                  form.setValue("word", text);
+                }}
+              >
+                <ClipboardPaste className="size-6" />
+              </button>
+              <Button
+                type="submit"
+                className="size-7 rounded-full"
+                disabled={isPending}
+                size="icon"
+              >
+                {isPending ? (
+                  <Loader2 className="size-4 text-background animate-spin" />
+                ) : (
+                  <ArrowUp className="size-4 text-background" />
+                )}
+              </Button>
+            </div>
           </form>
+          <FormField
+            name="word"
+            control={form.control}
+            render={() => (
+              <FormItem>
+                <FormControl>
+                  <FormMessage className="mt-2" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </Form>
       </Container>
     </div>

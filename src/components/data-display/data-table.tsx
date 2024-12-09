@@ -111,6 +111,7 @@ export function DataTable<TData, TValue>({
                 table.resetRowSelection();
               }
             }}
+            type="button"
           >
             <Trash className="mr-2 size-4" />
             削除 ({table.getFilteredSelectedRowModel().rows.length})
@@ -176,6 +177,7 @@ export function DataTable<TData, TValue>({
           size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
+          type="button"
         >
           前へ
         </Button>
@@ -184,6 +186,7 @@ export function DataTable<TData, TValue>({
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
+          type="button"
         >
           次へ
         </Button>
